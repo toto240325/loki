@@ -4,7 +4,7 @@
 	</head>
 	<body>
 		<?php
-			if(isset($_POST['add']))
+			if(isset($_POST['add']))  
 			{				
 				include "connect-db.php";
 				$conn = mysqli_connect($dbhost, $dbuser, $dbpass, $mydb);
