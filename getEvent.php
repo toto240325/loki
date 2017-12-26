@@ -19,6 +19,7 @@
 	header("Content-Type: application/json; charset=UTF-8");
 
 	//	echo $_SERVER['REQUEST_URI'];
+	$dbhost = '192.168.0.147';
 	$defaultTimeZone='UTC';
 	if(date_default_timezone_get()!=$defaultTimeZone) date_default_timezone_set($defaultTimeZone);
 	
@@ -42,6 +43,7 @@
 		";
 		//			echo $query;
 
+		global $dbhost;
 		include 'connect-db.php';
 		$conn = new mysqli($dbhost,$dbuser,$dbpass,$mydb);
 		if ($conn->connect_error) {
@@ -88,11 +90,11 @@
 	$currTime = _date("Y-m-d H:i:s", false, 'Europe/Paris');
 	
 	//$myhost = "localhost";
-	$myhost = "192.168.0.147"; 			
+	//$myhost = "192.168.0.147"; 			
 	$type = "backup p702";
 	
-	if(isset($_GET['myhost'])) { $myhost = $_GET['myhost']; }
-	if(isset($_GET['type'])) { $myhost = $_GET['type']; }
+	if(isset($_GET['dbhost'])) { $dbhost = $_GET['dbhost']; }
+	if(isset($_GET['type'])) { $$type = $_GET['type']; }
 
 
 	
