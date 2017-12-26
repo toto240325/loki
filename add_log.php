@@ -6,6 +6,7 @@
 		<?php
 			if(isset($_POST['add']))  
 			{				
+				$myhost = "192.168.0.147"; 			
 				include "connect-db.php";
 				$conn = mysqli_connect($dbhost, $dbuser, $dbpass, $mydb);
 				

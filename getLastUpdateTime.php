@@ -2,9 +2,16 @@
 
 /*
 
-adds a test record in DB : 
-http://192.168.0.2/loki/test_add_temp.php
-
+	This function returns in json an array containing the last event, with its ID, time, text, event_type, and current time :
+	
+	Should return something like this:
+	
+	{"recordsTemp":"40","recordsDetection":"2017-12-17 13:09:46"}
+	
+	
+	
+			
+	NB : json validate : https://jsonlint.com/
 
 */
 
@@ -27,49 +34,31 @@ http://192.168.0.2/loki/test_add_temp.php
 		return date($format, ($timestamp!=false?(int)$timestamp:$myDateTime->format('U')) + $offset);
 	}
 	
-	
-	function getLastUpdateDetectionOld($myhost) {
+	class Event {
+		public $id;
+		public $time;
+		public $text;
+		public $type;
 		
-		$outp = "";
-
-		$query = "
-		SELECT event_id, event_txt, event_time, event_temp 
-		FROM logs
-		ORDER BY event_id DESC
-		LIMIT 1
-		";
-		//			echo $query;
-
-
-
-		$conn = mysql_connect($myhost, $dbuser, $dbpass);
-		mysql_set_charset('utf8',$conn);
-		$db_selected = mysql_select_db($mydb, $conn);
-		if (!$db_selected) { die ('Database access error : ' . mysql_error());}
-		$result = mysql_query($query, $conn);
-		if(!$result) {
-			die("Database query failed: " . mysql_error());
+		// Assigning the values
+		public function __construct($id, $time, $text, $type) {
+		  $this->id = $id;
+		  $this->time = $time;
+		  $this->text = $text;
+		  $this->type = $type;
 		}
-		while ($rs = mysql_fetch_array($result)) {			
-			if ($outp != "") {$outp .= ",";}
-			
-			$time = $rs["event_time"];
-			$txt = $rs["event_txt"];
-			$temp = $rs["event_temp"];
-			$outp .= '{';
-			$outp .= '"time":"'.$time.'",';
-			$outp .= '"txt":'.json_encode($txt). ',';
-			$outp .= '"temp":"'. $temp.'"'; 
-			$outp .= '}';
+		
+		// Creating a method (function tied to an object)
+		public function test() {
+		  return "Hello, this is this event : " . $this->id . " " . $this->time . " !";
 		}
-		mysql_close($conn);
-		return $outp;				
 	}
-	
-	function getLastUpdateDetection($myhost) {
+
+
+	function getLastEvent($myhost) {
 		
 		$query = "
-		SELECT event_id, event_text, event_time
+		SELECT event_id, event_text, event_time, event_type
 		FROM event
 		ORDER BY event_id DESC
 		LIMIT 1
@@ -77,7 +66,7 @@ http://192.168.0.2/loki/test_add_temp.php
 		//			echo $query;
 		
 		
-		
+		global $myhost;
 		include 'connect-db.php';
 		$conn = new mysqli($dbhost,$dbuser,$dbpass,$mydb);
 		if ($conn->connect_error) {
@@ -101,6 +90,8 @@ http://192.168.0.2/loki/test_add_temp.php
 
 
 	function getLastUpdateTemp($myhost) {
+		
+		global $myhost;
 		
 		$query = "
 		SELECT temp_id, temp_time, temp_temp 
@@ -145,6 +136,7 @@ http://192.168.0.2/loki/test_add_temp.php
 	$myhost = "192.168.0.147";
 	
 	if(isset($_GET['myhost'])) { $myhost = $_GET['myhost']; }
+	
 	
 /*	
 	$outpTemp = getLastUpdateTemp($myhost);
